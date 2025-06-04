@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 fn main() {
     // init
-    let mut map = HashMap::from([("sam", 9), ("mark", 2), ("ben", 30)]);
+    let mut map = HashMap::from([("Sam", 9), ("Mark", 2), ("Ben", 30)]);
 
     //iterating
     for key in map.keys() {
@@ -11,7 +11,7 @@ fn main() {
     }
 
     //inserting
-    map.insert("john", 45);
+    map.insert("John", 45);
 
     println!("Who do you want to find?");
     let person: String = input();
@@ -22,4 +22,7 @@ fn main() {
     } else {
         println!("Key not found!");
     }
+
+    // updating
+    map.entry("John").or_insert(88);
 }
