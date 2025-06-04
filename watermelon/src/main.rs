@@ -1,4 +1,3 @@
-use input_method::input;
 // 2 people want to divide a watermelon but want even slices if w is odd output is NO if even YES
 
 fn is_even(w: usize) -> bool {
