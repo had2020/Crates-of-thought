@@ -6,6 +6,20 @@ The algorithm repeats this, until n is one. For example, the sequence for n=3 is
  3 -> 10 -> 5 -> 16 -> 8 -> 4 -> 2 -> 1
 */
 
+use std::io;
+
 fn main() {
-    let n: i32 = 4;
+    let mut input = String::new();
+    io::stdin().read_line(&mut input).unwrap();
+    let mut n: u64 = input.trim().parse().unwrap();
+
+    while n != 1 {
+        print!("{} ", n);
+        if n % 2 == 0 {
+            n /= 2;
+        } else {
+            n = n * 3 + 1;
+        }
+    }
+    println!("1");
 }
