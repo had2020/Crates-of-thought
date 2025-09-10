@@ -1,11 +1,17 @@
-struct Interpreter {}
+struct Interpreter {
+    num: f32,
+    vars: Vec<(String, f32)>
+}
 
 impl Interpreter {
     fn new() -> Interpreter {
-        unimplemented!()
+        Interpreter {
+            num: 0.0,
+            vars: Vec::new()
+        }
     }
 
     fn input(&mut self, input: &str) -> Result<Option<f32>, String> {
-        unimplemented!()
+        for i in input
     }
 }
