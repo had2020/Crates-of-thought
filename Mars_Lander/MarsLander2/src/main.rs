@@ -11,13 +11,17 @@ This puzzle is the second level of the "Mars Lander" trilogy.
 The controls are the same as the previous level but you must now control the angle in order to succeed.
  */
 
+use std::io;
+
 macro_rules! parse_input {
-    ($x:expr, $t:ident) => ($x.trim().parse::<$t>().unwrap())
+    ($x:expr, $t:ident) => {
+        $x.trim().parse::<$t>().unwrap()
+    };
 }
 
 fn main() {
-    let mut last_point: (i32, i32) = (0,0);
-    let mut target: (i32, i32) = (0,0);
+    let mut last_point: (i32, i32) = (0, 0);
+    let mut target: (i32, i32) = (0, 0);
 
     let mut input_line = String::new();
     io::stdin().read_line(&mut input_line).unwrap();
@@ -30,7 +34,6 @@ fn main() {
         let land_y = parse_input!(inputs[1], i32); // Y coordinate of a surface point. By linking all the points together in a sequential fashion, you form the surface of Mars.
         if land_y == last_point.1 {
             target = (land_x, land_y);
-            break;
         } else {
             last_point = (land_x, land_y);
         }
@@ -48,6 +51,17 @@ fn main() {
         let fuel = parse_input!(inputs[4], i32); // the quantity of remaining fuel in liters.
         let rotate = parse_input!(inputs[5], i32); // the rotation angle in degrees (-90 to 90).
         let power = parse_input!(inputs[6], i32); // the thrust power (0 to 4).
+
+        eprintln!("{:?}", target);
+
+        if (target.0 - x) < 0 {
+            // left
+            println!("45 4");
+        } else {
+            //right
+            println!("-45 4");
+        }
+
         /*
         if v_speed > 30 {
             println!("0 4");
