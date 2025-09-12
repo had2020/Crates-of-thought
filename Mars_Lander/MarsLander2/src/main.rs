@@ -22,18 +22,36 @@ macro_rules! parse_input {
 fn main() {
     let mut last_point: (i32, i32) = (0, 0);
     let mut target: (i32, i32) = (0, 0);
+    let mut was_flat: bool = false;
+    let mut require_same: u8 = 100;
+    let mut lock_first_target: bool = false;
 
     let mut input_line = String::new();
     io::stdin().read_line(&mut input_line).unwrap();
     let surface_n = parse_input!(input_line, i32); // the number of points used to draw the surface of Mars.
+
     for i in 0..surface_n as usize {
         let mut input_line = String::new();
         io::stdin().read_line(&mut input_line).unwrap();
         let inputs = input_line.split(" ").collect::<Vec<_>>();
         let land_x = parse_input!(inputs[0], i32); // X coordinate of a surface point. (0 to 6999)
         let land_y = parse_input!(inputs[1], i32); // Y coordinate of a surface point. By linking all the points together in a sequential fashion, you form the surface of Mars.
-        if land_y == last_point.1 {
-            target = (land_x, land_y);
+        if !was_flat {
+            if land_y == last_point.1 {
+                if !lock_first_target {
+                    target = (land_x, land_y);
+                }
+                if require_same == 0 {
+                    was_flat = true;
+                } else {
+                    require_same -= 1;
+                }
+            } else {
+                last_point = (land_x, land_y);
+            }
+        } else if target != (land_x, land_y) {
+            target = ((land_x - target.0), target.1);
+            break;
         } else {
             last_point = (land_x, land_y);
         }
@@ -52,14 +70,17 @@ fn main() {
         let rotate = parse_input!(inputs[5], i32); // the rotation angle in degrees (-90 to 90).
         let power = parse_input!(inputs[6], i32); // the thrust power (0 to 4).
 
-        eprintln!("{:?}", target);
+        eprintln!("target: {:?}", target);
 
-        if (target.0 - x) < 0 {
-            // left
-            println!("45 4");
+        if (target.0 - x) < 100 {
         } else {
-            //right
-            println!("-45 4");
+            if ((target.0 - 100) - x) < 0 {
+                // left
+                println!("25 3");
+            } else {
+                //right
+                println!("-25 3");
+            }
         }
 
         /*
