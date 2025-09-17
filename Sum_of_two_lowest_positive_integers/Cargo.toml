@@ -1,0 +1,6 @@
+[package]
+name = "Sum_of_two_lowest_positive_integers"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
