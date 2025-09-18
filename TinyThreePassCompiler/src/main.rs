@@ -1,6 +1,8 @@
 use preloaded::{Ast, Operator, Source};
 
-pub struct Compiler {}
+pub struct Compiler {
+    para_keys: Vec<char>,
+}
 
 impl Default for Compiler {
     fn default() -> Self {
@@ -10,7 +12,9 @@ impl Default for Compiler {
 
 impl Compiler {
     pub fn new() -> Compiler {
-        Compiler {}
+        Compiler {
+            para_keys: Vec::new(),
+        }
     }
 
     fn tokenize<'a>(&self, program: &'a str) -> Vec<&'a str> {
@@ -56,12 +60,25 @@ impl Compiler {
     }
 
     pub fn pass1(&mut self, program: &str) -> Ast {
-        let tokens = self.tokenize(program);
-        let mut iter = tokens.iter().peekable(); // PANDAS
-        let mut r: Ast = ();
-        while let Some(&c) = iter.peek() {
-            match &c {
-                _ => {}
+        let tokens = self.tokenize(program); // Pemdas
+        let mut fin_paras: bool = false;
+        for t in tokens {
+            if !fin_paras && t.chars().nth(0).unwrap().is_ascii_alphabetic() {
+                self.para_keys.push(t.chars().nth(0).unwrap());
+            } else if !fin_paras && t == "]" {
+                fin_paras = true;
+            } else if fin_paras {
+                match t.chars().nth(0).unwrap() {
+                    'a'..='z' | 'A'..='Z' => {}
+                    '0'..='9' => {}
+                    '(' => {}
+                    ')' => {}
+                    '*' => {}
+                    '/' => {}
+                    '+' => {}
+                    '-' => {}
+                    _ => {}
+                }
             }
         }
     }
