@@ -59,7 +59,17 @@ impl Compiler {
         self.pass3(&ast)
     }
 
+    pub enum Pemdas {
+        Par,
+        Mut,
+        Div,
+        Add,
+        Sub,
+    }
+
     pub fn pass1(&mut self, program: &str) -> Ast {
+        let mut syntax_tree: vec<Ast> = Vec::new();
+        let mut pemdas: Pemdas = Pemdas::Par
         let tokens = self.tokenize(program); // Pemdas
         let mut fin_paras: bool = false;
         for t in tokens {
@@ -69,15 +79,15 @@ impl Compiler {
                 fin_paras = true;
             } else if fin_paras {
                 match t.chars().nth(0).unwrap() {
-                    'a'..='z' | 'A'..='Z' => {}
-                    '0'..='9' => {}
-                    '(' => {}
-                    ')' => {}
-                    '*' => {}
-                    '/' => {}
-                    '+' => {}
-                    '-' => {}
-                    _ => {}
+                    'a'..='z' | 'A'..='Z' => {},
+                    '0'..='9' => {},
+                    '(' => {},
+                    ')' => {},
+                    '*' => {},
+                    '/' => {},
+                    '+' => {},
+                    '-' => {},
+                    _ => {},
                 }
             }
         }
