@@ -1,6 +1,3 @@
-/*
-https://www.codewars.com/kata/5265b0885fda8eac5900093b/train/rust
-*/
 use preloaded::{Ast, Operator, Source};
 
 pub struct Compiler {}
@@ -60,8 +57,13 @@ impl Compiler {
 
     pub fn pass1(&mut self, program: &str) -> Ast {
         let tokens = self.tokenize(program);
-        let mut iter = tokens.iter().peekable();
-        todo!();
+        let mut iter = tokens.iter().peekable(); // PANDAS
+        let mut r: Ast = ();
+        while let Some(&c) = iter.peek() {
+            match &c {
+                _ => {}
+            }
+        }
     }
 
     pub fn pass2(&mut self, ast: &Ast) -> Ast {
