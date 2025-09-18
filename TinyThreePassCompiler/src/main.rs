@@ -89,11 +89,15 @@ impl Compiler {
                         if cur_op.1 == "" {
                             for i in 0..self.para_keys.len() {
                                 if self.para_keys[i] == t.chars().nth(0).unwrap() {
-                                    cur_op.1 = format!("{}", i);
+                                    cur_op.1 = &format!("{}", i);
                                 }
                             }
                         } else if cur_op.2 == "" {
-                            cur_op.2 = t;
+                            for i in 0..self.para_keys.len() {
+                                if self.para_keys[i] == t.chars().nth(0).unwrap() {
+                                    cur_op.2 = &format!("{}", i);
+                                }
+                            }
                         } else {
                             syn_tree.push(Vec::new());
                         }
