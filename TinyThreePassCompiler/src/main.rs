@@ -7,6 +7,14 @@ impl Default for Compiler {
         Self::new()
     }
 }
+pub enum Op {
+    Par,
+    Mut,
+    Div,
+    Add,
+    Sub,
+    Missing,
+}
 impl Compiler {
     pub fn new() -> Compiler {
         Compiler {
@@ -54,16 +62,9 @@ impl Compiler {
         let ast = self.pass2(&ast);
         self.pass3(&ast)
     }
-    pub enum Op {
-        Par,
-        Mut,
-        Div,
-        Add,
-        Sub,
-    }
     pub fn pass1(&mut self, program: &str) -> Ast {
-        let mut syntax_tree: vec<Ast> = Vec::new();
-        let mut cur_binop: (Op, )
+        let mut syn_tree: Vec<Vec<Ast>> = Vec::new();
+        let mut cur_op: (Op, &str, &str) = (Op::Missing, "", "");
         let mut pemdas: Op = Op::Par;
         let tokens = self.tokenize(program); // Pemdas
         let mut fin_paras: bool = false;
@@ -74,15 +75,21 @@ impl Compiler {
                 fin_paras = true;
             } else if fin_paras {
                 match t.chars().nth(0).unwrap() {
-                    'a'..='z' | 'A'..='Z' => {},
-                    '0'..='9' => {},
-                    '(' => {},
-                    ')' => {},
-                    '*' => {},
-                    '/' => {},
-                    '+' => {},
-                    '-' => {},
-                    _ => {},
+                    'a'..='z' | 'A'..='Z' | '0'..='9' => {
+                        if cur_op.1 == "" {
+                            cur_op.1 = t;
+                        } else if cur_op.2 == "" {
+                            cur_op.2 = t;
+                        } else {
+                            syn_tree.push(Vec::new());
+                        }
+                    }
+                    '(' | ')' => syn_tree.push(Vec::new()),
+                    '*' => {}
+                    '/' => {}
+                    '+' => {}
+                    '-' => {}
+                    _ => {}
                 }
             }
         }
