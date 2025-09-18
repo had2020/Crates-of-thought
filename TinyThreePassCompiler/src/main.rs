@@ -7,6 +7,7 @@ impl Default for Compiler {
         Self::new()
     }
 }
+#[derive(PartialEq)]
 pub enum Op {
     Par,
     Mut,
@@ -14,6 +15,15 @@ pub enum Op {
     Add,
     Sub,
     Missing,
+}
+pub fn to_binop(cur_op: (Op, &str, &str)) -> Ast {
+    let oper: Operator = match cur_op.0 {
+        Op::Add => Operator::Add,
+        Op::Sub => Operator::Sub,
+        Op::Mut => Operator::Mul,
+        Op::Div => Operator::Div,
+        _ => Operator::Sub,
+    };
 }
 impl Compiler {
     pub fn new() -> Compiler {
@@ -77,7 +87,11 @@ impl Compiler {
                 match t.chars().nth(0).unwrap() {
                     'a'..='z' | 'A'..='Z' | '0'..='9' => {
                         if cur_op.1 == "" {
-                            cur_op.1 = t;
+                            for i in 0..self.para_keys.len() {
+                                if self.para_keys[i] == t.chars().nth(0).unwrap() {
+                                    cur_op.1 = format!("{}", i);
+                                }
+                            }
                         } else if cur_op.2 == "" {
                             cur_op.2 = t;
                         } else {
@@ -85,10 +99,26 @@ impl Compiler {
                         }
                     }
                     '(' | ')' => syn_tree.push(Vec::new()),
-                    '*' => {}
-                    '/' => {}
-                    '+' => {}
-                    '-' => {}
+                    '*' => {
+                        if cur_op.0 == Op::Missing {
+                            cur_op.0 = Op::Mut;
+                        }
+                    }
+                    '/' => {
+                        if cur_op.0 == Op::Missing {
+                            cur_op.0 = Op::Div;
+                        }
+                    }
+                    '+' => {
+                        if cur_op.0 == Op::Missing {
+                            cur_op.0 = Op::Add;
+                        }
+                    }
+                    '-' => {
+                        if cur_op.0 == Op::Missing {
+                            cur_op.0 = Op::Sub;
+                        }
+                    }
                     _ => {}
                 }
             }
