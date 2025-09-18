@@ -1,15 +1,12 @@
 use preloaded::{Ast, Operator, Source};
-
 pub struct Compiler {
     para_keys: Vec<char>,
 }
-
 impl Default for Compiler {
     fn default() -> Self {
         Self::new()
     }
 }
-
 impl Compiler {
     pub fn new() -> Compiler {
         Compiler {
@@ -52,24 +49,22 @@ impl Compiler {
 
         tokens
     }
-
     pub fn compile(&mut self, program: &str) -> Vec<String> {
         let ast = self.pass1(program);
         let ast = self.pass2(&ast);
         self.pass3(&ast)
     }
-
-    pub enum Pemdas {
+    pub enum Op {
         Par,
         Mut,
         Div,
         Add,
         Sub,
     }
-
     pub fn pass1(&mut self, program: &str) -> Ast {
         let mut syntax_tree: vec<Ast> = Vec::new();
-        let mut pemdas: Pemdas = Pemdas::Par
+        let mut cur_binop: (Op, )
+        let mut pemdas: Op = Op::Par;
         let tokens = self.tokenize(program); // Pemdas
         let mut fin_paras: bool = false;
         for t in tokens {
