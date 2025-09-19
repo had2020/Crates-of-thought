@@ -126,48 +126,50 @@ impl Compiler {
         let mut pemdas: Op = Op::Par;
         let tokens = self.tokenize(program); // Pemdas
         let mut fin_paras: bool = false;
-        for t in tokens {
-            if !fin_paras && t.chars().nth(0).unwrap().is_ascii_alphabetic() {
-                self.para_keys.push(t.chars().nth(0).unwrap());
-            } else if !fin_paras && t == "]" {
-                fin_paras = true;
-            } else if fin_paras {
-                match t.chars().nth(0).unwrap() {
-                    'a'..='z' | 'A'..='Z' | '0'..='9' => {
-                        if cur_op.1 == "" {
-                            for i in 0..self.para_keys.len() {
-                                cur_op.1 = t;
+        while pemdas != Op::Missing {
+            for t in tokens {
+                if !fin_paras && t.chars().nth(0).unwrap().is_ascii_alphabetic() {
+                    self.para_keys.push(t.chars().nth(0).unwrap());
+                } else if !fin_paras && t == "]" {
+                    fin_paras = true;
+                } else if fin_paras {
+                    match (t.chars().nth(0).unwrap(), pemdas) {
+                        ('a'..='z' | 'A'..='Z' | '0'..='9', _) => {
+                            if cur_op.1 == "" {
+                                for i in 0..self.para_keys.len() {
+                                    cur_op.1 = t;
+                                }
+                            } else if cur_op.2 == "" {
+                                for i in 0..self.para_keys.len() {
+                                    cur_op.2 = t;
+                                }
+                            } else {
+                                syn_tree.push(Vec::new());
                             }
-                        } else if cur_op.2 == "" {
-                            for i in 0..self.para_keys.len() {
-                                cur_op.2 = t;
+                        }
+                        ('(' | ')', Op::Par) => syn_tree.push(Vec::new()),
+                        ('*', Op::Mut) => {
+                            if cur_op.0 == Op::Missing {
+                                cur_op.0 = Op::Mut;
                             }
-                        } else {
-                            syn_tree.push(Vec::new());
                         }
-                    }
-                    '(' | ')' => syn_tree.push(Vec::new()),
-                    '*' => {
-                        if cur_op.0 == Op::Missing {
-                            cur_op.0 = Op::Mut;
+                        ('/', Op::Div) => {
+                            if cur_op.0 == Op::Missing {
+                                cur_op.0 = Op::Div;
+                            }
                         }
-                    }
-                    '/' => {
-                        if cur_op.0 == Op::Missing {
-                            cur_op.0 = Op::Div;
+                        ('+', Op::Add) => {
+                            if cur_op.0 == Op::Missing {
+                                cur_op.0 = Op::Add;
+                            }
                         }
-                    }
-                    '+' => {
-                        if cur_op.0 == Op::Missing {
-                            cur_op.0 = Op::Add;
+                        ('-', Op::Sub) => {
+                            if cur_op.0 == Op::Missing {
+                                cur_op.0 = Op::Sub;
+                            }
                         }
+                        _ => {}
                     }
-                    '-' => {
-                        if cur_op.0 == Op::Missing {
-                            cur_op.0 = Op::Sub;
-                        }
-                    }
-                    _ => {}
                 }
             }
         }
