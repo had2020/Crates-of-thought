@@ -16,7 +16,17 @@ pub enum Op {
     Sub,
     Missing,
 }
-pub fn to_binop(cur_op: (Op, &str, &str)) -> Ast {
+pub fn find_para_key(para_keys: Vec<char>, key: char) -> i32 {
+    let mut iter: usize = 0;
+    for i in 0..para_keys.len() {
+        if para_keys[i] == key {
+            break;
+        }
+        iter += 1;
+    }
+    iter as i32
+}
+pub fn to_binop(cur_op: (Op, &str, &str), para_keys: Vec<char>) -> Ast {
     let oper: Operator = match cur_op.0 {
         Op::Add => Operator::Add,
         Op::Sub => Operator::Sub,
@@ -24,32 +34,32 @@ pub fn to_binop(cur_op: (Op, &str, &str)) -> Ast {
         Op::Div => Operator::Div,
         _ => Operator::Sub,
     };
-    //.to_digit(10).unwrap() as i32
+    let operhand1: i32 = find_para_key(para_keys, cur_op.1.chars().nth(0).unwrap());
+    let operhand2: i32 = find_para_key(para_keys, cur_op.2.chars().nth(0).unwrap());
     match (
         cur_op.1.chars().nth(0).unwrap().is_ascii_alphabetic(),
         cur_op.2.chars().nth(0).unwrap().is_ascii_alphabetic(),
     ) {
         (true, true) => Ast::binop(
             oper,
-            Ast::Value(
-                Source::Arg,
-                cur_op.1.chars().nth(0).unwrap().to_digit(10).unwrap() as i32,
-            ),
-            Ast::Value(
-                Source::Arg,
-                cur_op.2.chars().nth(0).unwrap().to_digit(10).unwrap() as i32,
-            ),
+            Ast::Value(Source::Arg, operhand1),
+            Ast::Value(Source::Arg, operhand2),
         ),
         (true, false) => Ast::binop(
             oper,
-            Ast::Value(
-                Source::Arg,
-                cur_op.1.chars().nth(0).unwrap().to_digit(10).unwrap() as i32,
-            ),
+            Ast::Value(Source::Arg, operhand1),
             Ast::Value(
                 Source::Imm,
                 cur_op.2.chars().nth(0).unwrap().to_digit(10).unwrap() as i32,
             ),
+        ),
+        (false, true) => Ast::binop(
+            oper,
+            Ast::Value(
+                Source::Imm,
+                cur_op.1.chars().nth(0).unwrap().to_digit(10).unwrap() as i32,
+            ),
+            Ast::Value(Source::Arg, operhand2),
         ),
         (false, false) => Ast::binop(
             oper,
@@ -65,16 +75,6 @@ pub fn to_binop(cur_op: (Op, &str, &str)) -> Ast {
     }
 }
 impl Compiler {
-    pub fn find_para_key(para_keys: Vec<char>, key: char) -> usize {
-        let mut iter: usize = 0;
-        for i in 0..para_keys.len() {
-            if para_keys[i] == key {
-                break;
-            }
-            iter += 1;
-        }
-        iter
-    }
     pub fn new() -> Compiler {
         Compiler {
             para_keys: Vec::new(),
