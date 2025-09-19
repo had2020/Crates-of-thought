@@ -16,7 +16,7 @@ pub enum Op {
     Sub,
     Missing,
 }
-pub fn to_binop(cur_op:(Op, &str, &str)) -> Ast{
+pub fn to_binop(cur_op: (Op, &str, &str)) -> Ast {
     let oper: Operator = match cur_op.0 {
         Op::Add => Operator::Add,
         Op::Sub => Operator::Sub,
@@ -24,17 +24,33 @@ pub fn to_binop(cur_op:(Op, &str, &str)) -> Ast{
         Op::Div => Operator::Div,
         _ => Operator::Sub,
     };
-    match (cur_op.1.chars().nth(0).is_ascii_alphabetic(), cur_op.2.chars().nth(0).is_ascii_alphabetic()) {
-        (true, true) => Ast::(oper, cur_op.1.parse(), cur_op.2.parse()),
-        (true, false) => Ast::(oper, cur_op.1.parse(), cur_op.2.parse()),
-        (false, false) => Ast::(oper, cur_op.1.parse(), cur_op.2.parse()),
+    //.to_digit(10).unwrap() as i32
+    match (
+        cur_op.1.chars().nth(0).unwrap().is_ascii_alphabetic(),
+        cur_op.2.chars().nth(0).unwrap().is_ascii_alphabetic(),
+    ) {
+        (true, true) => Ast::binop(
+            oper,
+            Ast::Value(Source::Arg, cur_op.1.parse()),
+            Ast::Value(Source::Arg, cur_op.2.parse()),
+        ),
+        (true, false) => Ast::binop(
+            oper,
+            Ast::Value(Source::Arg, cur_op.1.parse()),
+            Ast::Value(Source::Imm, cur_op.2.parse()),
+        ),
+        (false, false) => Ast::binop(
+            oper,
+            Ast::Value(Source::Imm, cur_op.1.parse()),
+            Ast::Value(Source::Imm, cur_op.2.parse()),
+        ),
     }
 }
 impl Compiler {
     pub fn find_para_key(para_keys: Vec<char>, key: char) -> usize {
         for i in 0..para_keys.len() {
             if para_keys[i] == key {
-                i
+                i as usize
             }
         }
     }
@@ -108,29 +124,29 @@ impl Compiler {
                         } else {
                             syn_tree.push(Vec::new());
                         }
-                    },
+                    }
                     '(' | ')' => syn_tree.push(Vec::new()),
                     '*' => {
                         if cur_op.0 == Op::Missing {
                             cur_op.0 = Op::Mut;
                         }
-                    },
+                    }
                     '/' => {
                         if cur_op.0 == Op::Missing {
                             cur_op.0 = Op::Div;
                         }
-                    },
+                    }
                     '+' => {
                         if cur_op.0 == Op::Missing {
                             cur_op.0 = Op::Add;
                         }
-                    },
+                    }
                     '-' => {
                         if cur_op.0 == Op::Missing {
                             cur_op.0 = Op::Sub;
                         }
-                    },
-                    _ => {},
+                    }
+                    _ => {}
                 }
             }
         }
