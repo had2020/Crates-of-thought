@@ -172,6 +172,13 @@ impl Compiler {
                     }
                 }
             }
+            pemdas = match pemdas {
+                Op::Par => Op::Mut,
+                Op::Mut => Op::Div,
+                Op::Div => Op::Add,
+                Op::Add => Op::Sub,
+                Op::Sub => Op::Missing,
+            }
         }
     }
 
