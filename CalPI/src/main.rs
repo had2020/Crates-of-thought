@@ -11,5 +11,9 @@ fn pi_leibniz(iterations: u64) -> f64 {
 
 fn main() {
     let start = Instant::now();
-    println!("time:{:?}, pi:{}", start.elapsed(), pi_leibniz(1_000_000));
+    println!(
+        "elapsed:{:?}, pi:{}",
+        start.elapsed(),
+        pi_leibniz(1_000_000)
+    );
 }
