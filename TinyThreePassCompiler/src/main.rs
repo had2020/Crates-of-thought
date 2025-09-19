@@ -31,28 +31,49 @@ pub fn to_binop(cur_op: (Op, &str, &str)) -> Ast {
     ) {
         (true, true) => Ast::binop(
             oper,
-            Ast::Value(Source::Arg, cur_op.1.parse()),
-            Ast::Value(Source::Arg, cur_op.2.parse()),
+            Ast::Value(
+                Source::Arg,
+                cur_op.1.chars().nth(0).unwrap().to_digit(10).unwrap() as i32,
+            ),
+            Ast::Value(
+                Source::Arg,
+                cur_op.2.chars().nth(0).unwrap().to_digit(10).unwrap() as i32,
+            ),
         ),
         (true, false) => Ast::binop(
             oper,
-            Ast::Value(Source::Arg, cur_op.1.parse()),
-            Ast::Value(Source::Imm, cur_op.2.parse()),
+            Ast::Value(
+                Source::Arg,
+                cur_op.1.chars().nth(0).unwrap().to_digit(10).unwrap() as i32,
+            ),
+            Ast::Value(
+                Source::Imm,
+                cur_op.2.chars().nth(0).unwrap().to_digit(10).unwrap() as i32,
+            ),
         ),
         (false, false) => Ast::binop(
             oper,
-            Ast::Value(Source::Imm, cur_op.1.parse()),
-            Ast::Value(Source::Imm, cur_op.2.parse()),
+            Ast::Value(
+                Source::Imm,
+                cur_op.1.chars().nth(0).unwrap().to_digit(10).unwrap() as i32,
+            ),
+            Ast::Value(
+                Source::Imm,
+                cur_op.2.chars().nth(0).unwrap().to_digit(10).unwrap() as i32,
+            ),
         ),
     }
 }
 impl Compiler {
     pub fn find_para_key(para_keys: Vec<char>, key: char) -> usize {
+        let mut iter: usize = 0;
         for i in 0..para_keys.len() {
             if para_keys[i] == key {
-                i as usize
+                break;
             }
+            iter += 1;
         }
+        iter
     }
     pub fn new() -> Compiler {
         Compiler {
