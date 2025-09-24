@@ -40,7 +40,7 @@ pub fn find_para_key(para_keys: Vec<char>, key: char) -> usize {
     iter as usize
 }
 enum Expr {
-    Num(u32),
+    Const(u32),
     Var(usize),
     Unary {
         op: Tok,
