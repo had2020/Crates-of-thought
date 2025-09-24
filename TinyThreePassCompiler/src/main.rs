@@ -39,6 +39,19 @@ pub fn find_para_key(para_keys: Vec<char>, key: char) -> usize {
     }
     iter as usize
 }
+enum Expr {
+    Num(f64),
+    Var(usize),
+    Unary {
+        op: Tok,
+        rhs: Box<Expr>,
+    },
+    Bin {
+        op: Tok,
+        lhs: Box<Expr>,
+        rhs: Box<Expr>,
+    },
+}
 impl Compiler {
     pub fn new() -> Compiler {
         Compiler {
@@ -88,13 +101,17 @@ impl Compiler {
         }
         toks
     }
+    pub fn parse_expr(&mut self, min_bp: u8) {
+        let mut lhs = match self.bump() {};
+    }
     pub fn compile(&mut self, program: &str) -> Vec<String> {
         let ast = self.pass1(program);
         let ast = self.pass2(&ast);
         self.pass3(&ast)
     }
     pub fn pass1(&mut self, program: &str) -> Ast {
-        let tokens = self.tokenize(program);
+        self.toks = self.tokenize(program);
+        self.parse_expr(0);
     }
     pub fn pass2(&mut self, ast: &Ast) -> Ast {
         todo!();
