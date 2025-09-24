@@ -49,6 +49,7 @@ impl Compiler {
     }
     pub fn tokenize(&mut self, program: &str) -> Vec<Tok> {
         let mut toks = Vec::new();
+        let mut para_fin: bool = false;
         for c in program.chars() {
             match c {
                 ']' => break,
@@ -57,16 +58,24 @@ impl Compiler {
             }
         }
         while let Some(c) = program.chars().next() {
-            match c {
-                'a'..='z' | 'A'..='Z' => toks.push(Tok::Var(find_para_key(self.para_keys, c))),
-                '0'..='9' => toks.push(Tok::Const(c.to_digit(10).unwrap())),
-                '+' => toks.push(Tok::Plus),
-                '-' => toks.push(Tok::Minus),
-                '*' => toks.push(Tok::Star),
-                '/' => toks.push(Tok::Slash),
-                '(' => toks.push(Tok::LParen),
-                ')' => toks.push(Tok::RParen),
-                _ => {}
+            if !para_fin {
+                match c {
+                    ']' => break,
+                    'a'..='z' | 'A'..='Z' => self.para_keys.push(c),
+                    _ => {}
+                }
+            } else {
+                match c {
+                    'a'..='z' | 'A'..='Z' => toks.push(Tok::Var(find_para_key(self.para_keys, c))),
+                    '0'..='9' => toks.push(Tok::Const(c.to_digit(10).unwrap())),
+                    '+' => toks.push(Tok::Plus),
+                    '-' => toks.push(Tok::Minus),
+                    '*' => toks.push(Tok::Star),
+                    '/' => toks.push(Tok::Slash),
+                    '(' => toks.push(Tok::LParen),
+                    ')' => toks.push(Tok::RParen),
+                    _ => {}
+                }
             }
         }
         toks
