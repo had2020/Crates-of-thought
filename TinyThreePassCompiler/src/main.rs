@@ -10,7 +10,7 @@ impl Default for Compiler {
     }
 }
 #[derive(Clone, PartialEq)]
-enum Tok {
+pub enum Tok {
     Var(i32),
     Const(i32),
     Plus,
@@ -58,24 +58,17 @@ impl Compiler {
     pub fn tokenize(&mut self, program: &str) -> Vec<Tok> {
         let mut toks = Vec::new();
         let mut para_fin: bool = false;
-        for c in program.chars() {
-            match c {
-                ']' => break,
-                'a'..='z' | 'A'..='Z' => self.para_keys.push(c),
-                _ => {}
-            }
-        }
         while let Some(c) = program.chars().next() {
             if !para_fin {
                 match c {
-                    ']' => break,
+                    ']' => para_fin = true,
                     'a'..='z' | 'A'..='Z' => self.para_keys.push(c),
                     _ => {}
                 }
             } else {
                 match c {
                     'a'..='z' | 'A'..='Z' => {
-                        toks.push(Tok::Var(find_para_key(self.para_keys, c) as i32))
+                        toks.push(Tok::Var(find_para_key(self.para_keys.clone(), c) as i32))
                     }
                     '0'..='9' => toks.push(Tok::Const(c.to_digit(10).unwrap() as i32)),
                     '+' => toks.push(Tok::Plus),
@@ -101,6 +94,7 @@ impl Compiler {
             ),
             Tok::Plus => self.parse_expr(10),
             Tok::LParen => self.parse_expr(0),
+            _ => panic!(""),
         };
         loop {
             let (lbp, rbp, op) = match Self::infix_bp(self.peek()) {
