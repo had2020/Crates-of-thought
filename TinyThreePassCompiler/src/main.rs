@@ -58,7 +58,7 @@ impl Compiler {
     pub fn tokenize(&mut self, program: &str) -> Vec<Tok> {
         let mut toks = Vec::new();
         let mut para_fin: bool = false;
-        while let Some(c) = program.chars().next() {
+        for c in program.chars() {
             if !para_fin {
                 match c {
                     ']' => para_fin = true,
