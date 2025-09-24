@@ -11,23 +11,14 @@ impl Default for Compiler {
 }
 #[derive(Clone, PartialEq)]
 enum Tok {
-    Var(usize),
-    Const(u32),
+    Var(i32),
+    Const(i32),
     Plus,
     Minus,
     Star,
     Slash,
     LParen,
     RParen,
-}
-pub fn infix_bp(op: &Tok) -> Option<(u8, u8)> {
-    match op {
-        Tok::Plus => Some((5, 5)),
-        Tok::Minus => Some((5, 5)),
-        Tok::Star => Some((7, 7)),
-        Tok::Slash => Some((7, 7)),
-        _ => None,
-    }
 }
 pub fn find_para_key(para_keys: Vec<char>, key: char) -> usize {
     let mut iter: usize = 0;
@@ -38,19 +29,6 @@ pub fn find_para_key(para_keys: Vec<char>, key: char) -> usize {
         iter += 1;
     }
     iter as usize
-}
-enum Expr {
-    Const(u32),
-    Var(usize),
-    Unary {
-        op: Tok,
-        rhs: Box<Expr>,
-    },
-    Bin {
-        op: Tok,
-        lhs: Box<Expr>,
-        rhs: Box<Expr>,
-    },
 }
 impl Compiler {
     pub fn new() -> Compiler {
@@ -67,6 +45,15 @@ impl Compiler {
         let t = self.toks[self.i].clone();
         self.i += 1;
         t
+    }
+    fn infix_bp(op: &Tok) -> Option<(u8, u8, Operator)> {
+        match op {
+            Tok::Plus => Some((5, 5, Operator::Add)),
+            Tok::Minus => Some((5, 5, Operator::Sub)),
+            Tok::Star => Some((7, 7, Operator::Mul)),
+            Tok::Slash => Some((7, 7, Operator::Div)),
+            _ => None,
+        }
     }
     pub fn tokenize(&mut self, program: &str) -> Vec<Tok> {
         let mut toks = Vec::new();
@@ -87,8 +74,10 @@ impl Compiler {
                 }
             } else {
                 match c {
-                    'a'..='z' | 'A'..='Z' => toks.push(Tok::Var(find_para_key(self.para_keys, c))),
-                    '0'..='9' => toks.push(Tok::Const(c.to_digit(10).unwrap())),
+                    'a'..='z' | 'A'..='Z' => {
+                        toks.push(Tok::Var(find_para_key(self.para_keys, c) as i32))
+                    }
+                    '0'..='9' => toks.push(Tok::Const(c.to_digit(10).unwrap() as i32)),
                     '+' => toks.push(Tok::Plus),
                     '-' => toks.push(Tok::Minus),
                     '*' => toks.push(Tok::Star),
@@ -101,26 +90,31 @@ impl Compiler {
         }
         toks
     }
-    pub fn parse_expr(&mut self, min_bp: u8) -> Expr {
+    pub fn parse_expr(&mut self, min_bp: u8) -> Ast {
         let mut lhs = match self.bump() {
-            Tok::Const(n) => Expr::Const(n),
-            Tok::Var(s) => Expr::Var(s),
-            Tok::Minus => {
-                let rhs = self.parse_expr(10);
-                Expr::Unary {
-                    op: Tok::Minus,
-                    rhs: Box::new(rhs),
-                }
-            }
-            Tok::Plus => {
-                let rhs = self.parse_expr(10);
-                Expr::Unary {
-                    op: Tok::Plus,
-                    rhs: Box::new(rhs),
-                }
-            }
+            Tok::Const(n) => Ast::Value(Source::Imm, n as i32),
+            Tok::Var(k) => Ast::Value(Source::Arg, k as i32),
+            Tok::Minus => Ast::BinOp(
+                Operator::Sub,
+                Box::new(Ast::Value(Source::Imm, 0)),
+                Box::new(self.parse_expr(10)),
+            ),
+            Tok::Plus => self.parse_expr(10),
             Tok::LParen => self.parse_expr(0),
         };
+        loop {
+            let (lbp, rbp, op) = match Self::infix_bp(self.peek()) {
+                Some(x) => x,
+                None => break,
+            };
+            if lbp < min_bp {
+                break;
+            }
+            self.bump();
+            let rhs = self.parse_expr(rbp);
+            lhs = Ast::BinOp(op, Box::new(lhs), Box::new(rhs));
+        }
+        lhs
     }
     pub fn compile(&mut self, program: &str) -> Vec<String> {
         let ast = self.pass1(program);
@@ -129,7 +123,7 @@ impl Compiler {
     }
     pub fn pass1(&mut self, program: &str) -> Ast {
         self.toks = self.tokenize(program);
-        self.parse_expr(0);
+        self.parse_expr(0)
     }
     pub fn pass2(&mut self, ast: &Ast) -> Ast {
         todo!();
