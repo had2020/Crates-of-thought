@@ -40,7 +40,7 @@ pub fn find_para_key(para_keys: Vec<char>, key: char) -> usize {
     iter as usize
 }
 enum Expr {
-    Num(f64),
+    Num(u32),
     Var(usize),
     Unary {
         op: Tok,
@@ -101,8 +101,26 @@ impl Compiler {
         }
         toks
     }
-    pub fn parse_expr(&mut self, min_bp: u8) {
-        let mut lhs = match self.bump() {};
+    pub fn parse_expr(&mut self, min_bp: u8) -> Expr {
+        let mut lhs = match self.bump() {
+            Tok::Const(n) => Expr::Const(n),
+            Tok::Var(s) => Expr::Var(s),
+            Tok::Minus => {
+                let rhs = self.parse_expr(10);
+                Expr::Unary {
+                    op: Tok::Minus,
+                    rhs: Box::new(rhs),
+                }
+            }
+            Tok::Plus => {
+                let rhs = self.parse_expr(10);
+                Expr::Unary {
+                    op: Tok::Plus,
+                    rhs: Box::new(rhs),
+                }
+            }
+            Tok::LParen => self.parse_expr(0),
+        };
     }
     pub fn compile(&mut self, program: &str) -> Vec<String> {
         let ast = self.pass1(program);
