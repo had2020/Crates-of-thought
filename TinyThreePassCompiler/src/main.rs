@@ -93,8 +93,14 @@ impl Compiler {
                 Box::new(self.parse_expr(10)),
             ),
             Tok::Plus => self.parse_expr(10),
-            Tok::LParen => self.parse_expr(0),
-            _ => panic!(""),
+            Tok::LParen => {
+                let expr = self.parse_expr(0);
+                match self.bump() {
+                    Tok::RParen => expr,
+                    _ => panic!("er"),
+                }
+            }
+            _ => panic!("er"),
         };
         loop {
             let (lbp, rbp, op) = match Self::infix_bp(self.peek()) {
