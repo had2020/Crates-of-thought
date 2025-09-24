@@ -47,6 +47,14 @@ impl Compiler {
             i: 0,
         }
     }
+    pub fn peek(&self) -> &Tok {
+        &self.toks[self.i]
+    }
+    pub fn bump(&mut self) -> Tok {
+        let t = self.toks[self.i].clone();
+        self.i += 1;
+        t
+    }
     pub fn tokenize(&mut self, program: &str) -> Vec<Tok> {
         let mut toks = Vec::new();
         let mut para_fin: bool = false;
