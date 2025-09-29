@@ -8,3 +8,8 @@
 /solana_anchor/basic_stucture/target
 /Mars_Lander/MarsLander1/target
 /Mars_Lander/MarsLander2/target
+
+
+# Added by cargo
+
+/target
