@@ -11,6 +11,10 @@ fn check_pipe(pipe_map: &[&str]) -> bool {
             }
         }
     }
-    
-    return false
+    let mut r: bool = true;
+    for ws in ws_poss {
+        let n_cels = [rt[ws.0][(ws.1)+1], rt[ws.0][(ws.1).saturating_sub(1)], rt[(ws.0)+1][ws.1], rt[(ws.0).saturating_sub(1)][ws.1]];
+        for _ in n_cels
+    }
+    return r
 }
