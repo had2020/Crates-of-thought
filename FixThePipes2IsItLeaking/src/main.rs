@@ -1,28 +1,62 @@
 enum PipDir {TR,TL,BR,BL,T,B,L,R,C}
-fn source_check(c:char, x: usize, y: usize, m_x: usize, m_y: usize) -> (bool, char) {
+fn is_source(c:char, x: usize, y: usize, m_x: usize, m_y: usize) -> (bool, char) {
     let pipdir = match (x,y) {
         (0,0) => PipDir::TL,
         (m_x,0) => PipDir::TR, 
         (0,m_y) => PipDir::BL,
         (m_x,m_y) => PipDir::BR,
-        (0,_) => PipDir::T,
+        (0,_) => {PipDir::T},
         (_,m_y) => PipDir::B,
-        ()
-        
+        (_,0) => PipDir::L,
+        (_,m_x) => PipDir::R,
+        _ => PipDir::C,
     }
-    let r = match (c, pipdir) {
-        '┗' => (true, c),
-        '┓' => (true, c),
-        '┏' => (true, c),
-        '┛' => (true, c),
-        '━' => (true, c),
-        '┃' => (true, c),
-        '┣' => (true, c),
-        '┫' => (true, c),
-        '┳' => (true, c),
-        '┻' => (true, c),
-        '╋' => (true, c),
-        _ => (false, c),
+    let r = match pipdir {
+        PipDir::TL => match c {
+            '┛' => (false, c),
+            _ => (true, c),
+        },
+        PipDir::TR => match c {
+            '┗' => (false, c),
+            _ => (true, c),
+        },
+        PipDir::BL => match c {
+            '┓' => (false, c),
+            _ => (true, c),
+        },
+        PipDir::BR => match c {
+            '┏' => (false, c),
+            _ => (true, c),
+        },
+        PipDir::T => match c {
+            '━' => (false, c),
+            _ => (true, c),
+        },
+        PipDir::B => match c {
+            '━' => (false, c),
+            _ => (true, c),
+        },
+        PipDir::L => match c {
+            '┓' => (true, c),
+            '┛' => (true, c),
+            '━' => (true, c),
+            '┫' => (true, c),
+            '┳' => (true, c),
+            '┻' => (true, c),
+            '╋' => (true, c),
+            _ => (true, c),
+        },
+        PipDir::R => match c {
+            '┗' => (true, c),
+            '┏' => (true, c),
+            '━' => (true, c),
+            '┣' => (true, c),
+            '┳' => (true, c),
+            '┻' => (true, c),
+            '╋' => (true, c),
+            _ => (true, c),
+        },
+        _ => (false, c)
     }; return r
 }
 fn check_pipe(pipe_map: &[&str]) -> bool {
@@ -32,11 +66,11 @@ fn check_pipe(pipe_map: &[&str]) -> bool {
     } // ws edge scanning
     let mut ws_poss: Vec<(usize, usize, char)> = Vec::new();
     for i in 0..rt.len() { // TL and TR
-        let n0 = source_check(rt[0][i]);
+        let n0 = is_source(rt[0][i]);
         if n0.0 {
             ws_poss.push((0,i, n0.1));
         }
-        let n1 = source_check(rt[i][0]);
+        let n1 = is_source(rt[i][0]);
         if n1.0 {
             ws_poss.push((i,0, n1.1));
         }
