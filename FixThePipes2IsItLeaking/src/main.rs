@@ -10,7 +10,7 @@ fn is_source(c:char, x: usize, y: usize, m_x: usize, m_y: usize) -> (bool, char)
         (_,0) => PipDir::L,
         (_,m_x) => PipDir::R,
         _ => PipDir::C,
-    }
+    };
     let r = match pipdir {
         PipDir::TL => match c {
             '┛' => (false, c),
@@ -66,19 +66,21 @@ fn check_pipe(pipe_map: &[&str]) -> bool {
     } // ws edge scanning
     let mut ws_poss: Vec<(usize, usize, char)> = Vec::new();
     for i in 0..rt.len() { // TL and TR
-        let n0 = is_source(rt[0][i]);
+        let n0 = is_source(rt[0][i], 0, i, rt[i].len()-1, rt.len()-1);
         if n0.0 {
             ws_poss.push((0,i, n0.1));
         }
-        let n1 = is_source(rt[i][0]);
+        let n1 = is_source(rt[i][0], 0, i, rt[i].len()-1, rt.len()-1);
         if n1.0 {
             ws_poss.push((i,0, n1.1));
         }
     }
-
     let mut r: bool = true;
     for ws in ws_poss {
-        let n_cels = [rt[ws.0][(ws.1)+1], rt[ws.0][(ws.1).saturating_sub(1)], rt[(ws.0)+1][ws.1], rt[(ws.0).saturating_sub(1)][ws.1]];
+        let t_cel = rt[ws.0][(ws.1)+1];
+        let b_cel = rt[ws.0][(ws.1).checked_sub(1)];
+        let l_cel = rt[(ws.0)+1][ws.1];
+        let r_cel = rt[(ws.0)..checked_sub(1)][ws.1];
         for c in n_cels {
             todo!("matching pipes, and recersive!")
         }
