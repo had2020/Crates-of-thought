@@ -76,13 +76,19 @@ fn check_pipe(pipe_map: &[&str]) -> bool {
         }
     }
     let mut r: bool = true;
-    for ws in ws_poss { 
-        let t_cel = rt[ws.0][(ws.1)+1];
-        let b_cel = rt[ws.0][(ws.1).saturating_sub(1)];
-        let l_cel = rt[(ws.0)+1][ws.1];
-        let r_cel = rt[(ws.0).saturating_sub(1)][ws.1];
-        let mut vists: Vec<Vec<>>
-        while 
+    for ws in ws_poss {
+        let t_cel = ((ws.0), (((ws.1)+1)), rt[ws.0][(ws.1)+1]);
+        let b_cel = ((ws.0), ((ws.1).saturating_sub(1)), rt[ws.0][(ws.1).saturating_sub(1)]);
+        let l_cel = (((ws.0)+1), (ws.1), rt[(ws.0)+1][ws.1]);
+        let r_cel = (((ws.0).saturating_sub(1)), (ws.1), rt[(ws.0).saturating_sub(1)][ws.1]);
+        let mut vists: Vec<Vec<bool>> = Vec::new();
+        let mut tasks: Vec<(usize,usize, char)> = vec!(t_cel, b_cel, l_cel, r_cel);
+        loop {
+            for i in tasks {
+                //rt[i.0][i.1]
+                match 
+            }
+        }
     }
     return r
 }
