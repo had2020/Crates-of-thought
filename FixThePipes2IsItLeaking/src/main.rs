@@ -2,10 +2,12 @@ enum PipDir {TR,TL,BR,BL,T,B,L,R,C}
 fn source_check(c:char, x: usize, y: usize, m_x: usize, m_y: usize) -> (bool, char) {
     let pipdir = match (x,y) {
         (0,0) => PipDir::TL,
-        (0,m_y) => PipDir::TR, 
-        (m_x,0) => PipDir::BL,
+        (m_x,0) => PipDir::TR, 
+        (0,m_y) => PipDir::BL,
         (m_x,m_y) => PipDir::BR,
-        _ => {},
+        (0,_) => PipDir::T,
+        (_,m_y) => PipDir::B,
+        ()
         
     }
     let r = match (c, pipdir) {
