@@ -1,24 +1,24 @@
 pub fn source_check(c:char) -> (bool, char) {
-    return match c {
-        '' => (true, '')
-        - => (false, '')
-    }
+    let r = match c {
+        '┗' => (true, c),
+        _ => (false, c),
+    }; return r
 }
 fn check_pipe(pipe_map: &[&str]) -> bool {
     let mut rt: Vec<Vec<char>> = Vec::new();
     for i in 0..pipe_map.len() {
         rt.push(pipe_map[i].chars().collect());
-    }
+    } // ws edge scanning
     let mut ws_poss: Vec<(usize, usize, char)> = Vec::new();
-    // ws edge scanning
     for i in 0..rt.len() { // TL and TR
-        if rt[0][i] == '┗' || rt[0][i] == '┓' || {
-            ws_poss.push((0,i));
+        let n0 = source_check(rt[0][i]);
+        if n0.0 {
+            ws_poss.push((0,i, n0.1));
         }
-        if rt[i][0] == '' {
-            ws_poss.push((i,0));
+        let n1 = source_check(rt[i][0]);
+        if n1.0 {
+            ws_poss.push((i,0, n1.1));
         }
-        match rt[0]
     }
 
     let mut r: bool = true;
