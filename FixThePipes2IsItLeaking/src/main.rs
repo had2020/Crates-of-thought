@@ -1,6 +1,25 @@
-pub fn source_check(c:char) -> (bool, char) {
-    let r = match c {
+enum PipDir {TR,TL,BR,BL,T,B,L,R,C}
+fn source_check(c:char, x: usize, y: usize, m_x: usize, m_y: usize) -> (bool, char) {
+    let pipdir = match (x,y) {
+        (0,0) => PipDir::TL,
+        (0,m_y) => PipDir::TR, 
+        (m_x,0) => PipDir::BL,
+        (m_x,m_y) => PipDir::BR,
+        _ => {},
+        
+    }
+    let r = match (c, pipdir) {
         '┗' => (true, c),
+        '┓' => (true, c),
+        '┏' => (true, c),
+        '┛' => (true, c),
+        '━' => (true, c),
+        '┃' => (true, c),
+        '┣' => (true, c),
+        '┫' => (true, c),
+        '┳' => (true, c),
+        '┻' => (true, c),
+        '╋' => (true, c),
         _ => (false, c),
     }; return r
 }
