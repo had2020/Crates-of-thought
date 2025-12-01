@@ -84,9 +84,23 @@ fn check_pipe(pipe_map: &[&str]) -> bool {
         let mut vists: Vec<Vec<bool>> = Vec::new();
         let mut tasks: Vec<(usize,usize, char)> = vec!(t_cel, b_cel, l_cel, r_cel);
         loop {
-            for i in tasks {
-                //rt[i.0][i.1]
-                match 
+            for i in 0..tasks.len() {
+                match rt[tasks[i].0][tasks[i].1] {
+                    '┗' => {},
+                    '┓' => {},
+                    '┏' => {},
+                    '┛' => {},
+                    '━' => {},
+                    '┃' => {},
+                    '┣' => {},
+                    '┫' => {},
+                    '┳' => {},
+                    '┻' => {},
+                    '╋' => {},
+                    _ => {},
+                }
+                vists.push(tasks[i].clone());
+                tasks.remove(i);
             }
         }
     }

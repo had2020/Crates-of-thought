@@ -72,6 +72,7 @@ impl Compiler {
             _ => panic!("er"),
         };
         loop {
+            // this needs to be improved along with this whole function
             let (lbp, rbp, op) = match Self::infix_bp(self.peek()) {
                 Some(x) => x,
                 None => break,
