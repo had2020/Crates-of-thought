@@ -24,6 +24,7 @@ pub fn is_valid(s: String) -> bool {
     r_flag
 }*/
 
+/*
 //https://leetcode.com/problems/valid-parentheses/
 pub fn is_valid(s: String) -> bool {
     let mut frt_para: u16 = 0; // (
@@ -50,6 +51,55 @@ pub fn is_valid(s: String) -> bool {
     let final_mismatch =
         ((frt_para != bck_para) || (frt_brace != bck_brace) || (frt_bracket != bck_bracket)) as u16;
     (underflow_occurred | final_mismatch) == 0
+}*/
+
+pub fn is_valid(s: String) -> bool {
+    let bytes = s.as_bytes();
+    let len = bytes.len();
+    if len % 2 != 0 || len > 64 {
+        return false;
+    }
+    let mut stack: u64 = 0;
+    let mut depth: u32 = 0;
+    for &b in bytes {
+        match b {
+            b'(' => {
+                stack = (stack << 2) | 0b01;
+                depth += 1;
+            }
+            b'[' => {
+                stack = (stack << 2) | 0b10;
+                depth += 1;
+            }
+            b'{' => {
+                stack = (stack << 2) | 0b11;
+                depth += 1;
+            }
+            b')' => {
+                if depth == 0 || (stack & 0b11) != 0b01 {
+                    return false;
+                }
+                stack >>= 2;
+                depth -= 1;
+            }
+            b']' => {
+                if depth == 0 || (stack & 0b11) != 0b10 {
+                    return false;
+                }
+                stack >>= 2;
+                depth -= 1;
+            }
+            b'}' => {
+                if depth == 0 || (stack & 0b11) != 0b11 {
+                    return false;
+                }
+                stack >>= 2;
+                depth -= 1;
+            }
+            _ => unsafe { std::hint::unreachable_unchecked() },
+        }
+    }
+    depth == 0
 }
 
 fn main() {
