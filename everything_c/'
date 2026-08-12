@@ -1,0 +1,75 @@
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Functions */
+void hi_and_return_void(char name[32]) { printf("hi, %s\n", name); }
+
+int swap_w_xor(int a0, int a1) {
+  int r = a0 ^ a1;
+  a1 = r ^ a0;
+  a0 = r ^ a1;
+  return r;
+}
+
+int main() {
+  /* Printing */
+  char test_char = 'A';
+  char msg0[] = "Hello"; // This is a string.
+  int a0 = 40;
+  double a1 = 3.14;
+
+  printf("Test %d \n", a0);
+  printf("My example %s", "this another string\n");
+  printf("floating num %f\n", a1);
+
+  /* Hetrotype operations */
+  int64_t a2 = 5;
+  double a3 = 4.0;
+
+  printf("%f\n", a2 / a3);
+
+  /* Constant vars*/
+  const int64_t TEST_NUM = 0b0010;
+  const intptr_t TEST_CPTR = 0xFF;
+
+  /* Inputs */
+  int fav_num;
+  printf("Enter Fav_int_number: \n");
+  scanf("%d", &fav_num);
+  printf("So your a %der, what char do you pair? \n", fav_num);
+  char fav_char;
+  scanf("%c", &fav_char);
+  printf("history: %c, %d\n", fav_char, fav_num);
+
+  char name[32];
+  printf("Enter name:\n");
+  // scanf("%s", name); // Will stop after whitespace.
+  fgets(name, 32, stdin); // Most reliable.
+  printf("Hello %s\n", name);
+
+  /* Arrays */
+  int numbys[] = {6, 7, 2, 1};
+  printf("ex: %d \n", numbys[2]);
+
+  int empty[10]; // Caps at para, but will return voids on uninited.
+
+  /* Using heaps via malloc */
+  int *vec_ptr = (int *)malloc(8);
+
+  for (int i = 0; i < 8; i++) {
+    vec_ptr[i] = i ^ (i * 2);
+  }
+
+  for (int i = 0; i < 8; i++) {
+    printf("i(%d) => %d, \n", i, vec_ptr[i]);
+  }
+
+  /* Calling functions */
+  hi_and_return_void(name);
+  printf("swap 4 and 7: %d\n", swap_w_xor(4, 7));
+
+  /* Return success:0 or fails 1 */
+  return 0; // After running use echo $? for code.
+}
