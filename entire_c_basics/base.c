@@ -4,6 +4,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* Compile, link, and make executable
+gcc -fsanitize=address -g -O1 main.c -o main
+*/
+
 /* Structs */
 struct VmInstruction {
   int opcode;
