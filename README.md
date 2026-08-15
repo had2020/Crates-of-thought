@@ -1,5 +1,5 @@
-# 🦀 My Rust Challenge Vault
+# My Challenge Vault
 
-Welcome to my Rust practice challenge vault!
+Welcome to my Rust and C/C++ practice challenge vault!
 
-As part of my ongoing effort to improve my Rust proficiency, I have worked various online problems, and other project. 
+As part of my ongoing effort to improve my proficiency, I have worked various online problems, and other project.
