@@ -1,4 +1,6 @@
+#include <limits.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 
 void printBinary(int num) {
@@ -9,13 +11,12 @@ void printBinary(int num) {
 }
 
 int reverseBits(int n) {
-  int cn = 0;
-  const int nlen = (sizeof(n) * 8) - 1;
-  for (int i = nlen; i > 0; i--) {
-    cn |= (n >> i) << i;
-    printBinary(cn);
+  int r = 0;
+  for (int i = 0; i < 32; i++) {
+    r = (r << 1) | (n & 1);
+    n >>= 1;
   }
-  return cn;
+  return r;
 }
 
 int main() {
